@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="variable_salary_rule" model="hr.salary.rule">
+            <field name="name">Variable Salary</field>
+            <field name="code">VI</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="41"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.variable_salary
+            </field>
+        </record>
+        <record id="allwances_salary_rule" model="hr.salary.rule">
+            <field name="name">Allowances Salary Rule</field>
+            <field name="code">ALWS</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="42"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.allowances
+            </field>
+        </record>
+        <record id="other_earnings_salary" model="hr.salary.rule">
+            <field name="name">Other Earnings Salary Rule</field>
+            <field name="code">OES</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="43"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.other_earnings
+            </field>
+        </record>
+        <record id="job_nature_salary" model="hr.salary.rule">
+            <field name="name">Job Nature Salary Rule</field>
+            <field name="code">JNAT</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="44"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.job_nature
+            </field>
+        </record>
+        <!--<record id="social_insurance_salary" model="hr.salary.rule">-->
+            <!--<field name="name">Social Insurance Salary</field>-->
+            <!--<field name="code">SIS</field>-->
+            <!--<field name="category_id" ref="hr_payroll.DED"/>-->
+            <!--<field name="sequence" eval="44"/>-->
+            <!--<field name="amount_select">code</field>-->
+            <!--<field name="amount_python_compute">-->
+<!--result = -1*(contract.monthly_insurance_subscription)-->
+            <!--</field>-->
+        <!--</record>-->
+        <record id="medical_insurance_salary" model="hr.salary.rule">
+            <field name="name">Medical Insurance Salary</field>
+            <field name="code">MIS</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="45"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -1*contract.medical_insurance
+            </field>
+        </record>
+        <record id="mobile_salary" model="hr.salary.rule">
+            <field name="name">Mobile Salary</field>
+            <field name="code">MOB</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="sequence" eval="46"/>
+            <field name="amount_select">code</field>
+            <!--<field name="amount_python_compute">result = -1*contract.mobile-->
+            <field name="amount_python_compute">
+bills = employee.env['mobile.bill'].search([('state','=','done'),('employee_id','=',employee.id),('date_from','>=',payslip.date_from),('date_to','&lt;=',payslip.date_to)])
+sum_amount = sum(bill.amount for bill in bills)
+result = -1*sum_amount
+            </field>
+        </record>
+         <record id="company_insurance_subscription_alw" model="hr.salary.rule">
+            <field name="name">Company Insurance Subscription Alw</field>
+            <field name="code">CISA</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="sequence" eval="81"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result =((26/100)*contract.wage+(24/100)*(contract.variable_salary))
+            </field>
+        </record>
+         <record id="company_insurance_subscription_ded" model="hr.salary.rule">
+            <field name="name">Company Insurance Subscription DED</field>
+            <field name="code">CISD</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="sequence" eval="47"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result =-1*((26/100)*contract.wage+(24/100)*(contract.variable_salary))
+            </field>
+        </record>
+
+
+        <record id="BNET" model="hr.salary.rule.category">
+            <field name="name">Before Net</field>
+            <field name="code">BNET</field>
+        </record>
+
+        <record id="before_net_salary_rule" model="hr.salary.rule">
+            <field name="name">Before Net Salary</field>
+            <field name="code">BNET</field>
+            <field name="category_id" ref="sv_payslips.BNET"/>
+            <field name="sequence" eval="180"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = categories.BASIC + categories.ALW + categories.DED
+            </field>
+        </record>
+
+         <record id="extra_loans_ded" model="hr.salary.rule">
+            <field name="name">Extra Loans</field>
+            <field name="code">ELOANS</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="sequence" eval="190"/>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -100 if BNET >= 5000 else 0
+            </field>
+        </record>
+
+    </data>
+</odoo>

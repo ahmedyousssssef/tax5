@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <record id="view_mobile_bill_form" model="ir.ui.view">
+            <field name="name">mobile.bill.form</field>
+            <field name="model">mobile.bill</field>
+            <field name="arch" type="xml">
+                <form string="MODEL">
+                    <header>
+                        <button name="action_done" string="Paid Bill" type="object" attrs="{'invisible':[('state','!=','draft')]}" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Name" readonly="True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="employee_id" attrs="{'readonly':[('state','=','done')],'required':[('state','=','draft')]}"/>
+                        <field name="date_from" attrs="{'readonly':[('state','=','done')],'required':[('state','=','draft')]}"/>
+                        <field name="date_to" attrs="{'readonly':[('state','=','done')],'required':[('state','=','draft')]}"/>
+                        <field name="currency_id" attrs="{'readonly':[('state','=','done')],'required':[('state','=','draft')]}"/>
+                        <field name="amount" attrs="{'readonly':[('state','=','done')],'required':[('state','=','draft')]}"/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_mobile_bill_tree" model="ir.ui.view">
+            <field name="name">mobile.bill.tree</field>
+            <field name="model">mobile.bill</field>
+            <field name="arch" type="xml">
+                <tree string="MODEL">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_mobile_bill_action" model="ir.actions.act_window">
+            <field name="name">Mobile</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">mobile.bill</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="menu_mobile_bill" name="Mobile Expenses" parent="hr_payroll.menu_hr_payroll_root" action="view_mobile_bill_action" sequence="10"/>
+    
+    </data>
+</odoo>

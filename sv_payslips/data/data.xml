@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="seq_mobile_bill" model="ir.sequence">
+            <field name="name">Mobile Bill</field>
+            <field name="code">mobile.bill</field>
+            <field name="prefix">MOB/</field>
+            <field name="padding">3</field>
+        </record>
+
+    </data>
+</odoo>

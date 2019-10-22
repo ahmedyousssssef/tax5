@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <report
+                id="hr_payslips_report"
+                model="hr.payslip"
+                report_type="qweb-pdf"
+                string="Payslip Report"
+                name="sv_payslips.hr_payslips_tmp_report"
+                file="sv_payslips.hr_payslips_tmp_report"
+        />
+
+        <record id="paperformat_payslips" model="report.paperformat">
+            <field name="name">paperformat_payslip</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">4</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">5</field>
+            <field name="dpi">80</field>
+        </record>
+
+        <record id="sv_payslips.hr_payslips_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="sv_payslips.paperformat_payslips"/>
+        </record>
+
+
+        <template id="hr_payslips_tmp_report">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+
+                    <div class="page">
+
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <img t-if="o.employee_id.company_id and o.employee_id.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(o.employee_id.company_id.logo)" style="max-height:80px"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <table style="height:55px;text-align:center;width:250px;">
+                                    <tr style="font-size:25px">
+                                        <td style="border: 1px solid black">
+                                            Salary Slip
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            <t t-esc="o.get_payslip_month()"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-xs-4">
+
+                            </div>
+
+                        </div>
+
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <table style="height:55px;text-align:center;width:500px;font-size:20px">
+                                    <tr style="">
+                                        <td style="border: 1px solid black">
+                                            Name
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            Employee ID
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.employee_code"/>
+                                            <!--<span t-field="o.employee_id.barcode"/>-->
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <table style="height:55px;text-align:center;width:500px;font-size:20px">
+                                    <tr style="">
+                                        <td style="border: 1px solid black">
+                                            Title
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.job_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            Department
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.department_id"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <t t-set="lines" t-value="o.get_payslip_lines()"/>
+                        <br></br>
+                        <table class="table table-condensed table-bordered">
+                            <tr style="background-color:d0cfcf;">
+                                <th>Description</th>
+                                <th>Earnings</th>
+                                <th>Deductions</th>
+                            </tr>
+                            <tr>
+                                <td>Basic Salary</td>
+                                <td><t t-esc="lines['basic']" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Variable Salary</td>
+                                <td><t t-esc="lines['variable']" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Overtime</td>
+                                <td><t t-esc="lines['overtime']" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Allowances</td>
+                                <td><t t-esc="lines['allowances']" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Other</td>
+                                <td><t t-esc="lines['other_earn']" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Tax</td>
+                                <td></td>
+                                <td><t t-esc="lines['tax']" /></td>
+                            </tr>
+                            <tr>
+                                <td>Social Insurance</td>
+                                <td></td>
+                                <td><t t-esc="lines['social']" /></td>
+                            </tr>
+                            <tr>
+                                <td>Medical Insurance</td>
+                                <td></td>
+                                <td><t t-esc="lines['medical']" /></td>
+                            </tr>
+                            <tr>
+                                <td>Mobile</td>
+                                <td></td>
+                                <td><t t-esc="lines['mobile']" /></td>
+                            </tr>
+                            <tr>
+                                <td>Unpaid Leave</td>
+                                <td></td>
+                                <td><t t-esc="lines['unpaid']" /></td>
+                            </tr>
+                            <tr>
+                                <td>Other</td>
+                                <td></td>
+                                <td><t t-esc="lines['other_ded']" /></td>
+                            </tr>
+                            <tr style="background-color:d0cfcf;">
+                                <td>Total</td>
+                                <td><t t-esc="lines['total_ear']" /></td>
+                                <td><t t-esc="lines['total_ded']" /></td>
+                            </tr>
+                        </table>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <table style="height:55px;text-align:center;width:500px;font-size:20px">
+                                    <tr style="">
+                                        <td style="border: 1px solid black">
+                                            Payment Day
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <t t-if="o.state=='done'">
+                                                <t t-esc="o.get_paid_date()" />
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            Bank Name
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.bank_name_id" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            Bank Account Name
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.bank_account_name" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            Bank Account
+                                        </td>
+                                        <td style="border: 1px solid black">
+                                            <span t-field="o.employee_id.bank_account_number" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <table style="height:55px;text-align:center;width:500px;font-size:20px">
+                                    <tr style="">
+                                        <td style="border: 1px solid black">
+                                            Net Pay
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            <t t-esc="lines['total']" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black">
+                                            <t t-esc="o.convert_amount_to_text(lines['total'])" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>
